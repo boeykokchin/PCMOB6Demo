@@ -1,46 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  ActivityIndicator,
+  Button,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { commonStyles } from '../styles/commonStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-
-const API = 'https://yjsoon.pythonanywhere.com';
-const API_WHOAMI = '/whoami';
+import { useUsername } from '../hooks/useAPI';
 
 export default function AccountScreen({ navigation }) {
-  const [username, setUsername] = useState('');
+  const [username, loading, error, refresh] = useUsername();
 
-  async function getUsername() {
-    console.log('---- Getting user name ----');
-    const token = await AsyncStorage.getItem('token');
-    console.log(`Token is ${token}`);
-    try {
-      const response = await axios.get(API + API_WHOAMI, {
-        headers: { Authorization: `JWT ${token}` },
-      });
-      console.log('Got user name!');
-      setUsername(response.data.username);
-    } catch (error) {
-      console.log('Error getting user name');
-      if (error.response) {
-        console.log(error.response.data);
-      } else {
-        console.log(error);
-      }
-      // We should probably go back to the login screen???
+  // signs out if the useUsername hook returns error as true
+  useState(() => {
+    if (error) {
+      signOut();
     }
-  }
+  }, [error]);
 
-  useEffect(() => {
-    console.log('Setting up nav listener');
-    // Check for when we come back to this screen
+  useState(() => {
     const removeListener = navigation.addListener('focus', () => {
-      console.log('Running nav listener');
-      setUsername('');
-      getUsername();
+      refresh(true);
     });
-    getUsername();
-
     return removeListener;
   }, []);
 
@@ -52,7 +35,7 @@ export default function AccountScreen({ navigation }) {
   return (
     <View style={commonStyles.container}>
       <Text>Account Screen</Text>
-      <Text>{username}</Text>
+      {loading ? <ActivityIndicator /> : <Text>{username}</Text>}
       <Button title='Sign out' onPress={signOut} />
     </View>
   );
