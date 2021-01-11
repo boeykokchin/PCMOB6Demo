@@ -4,7 +4,7 @@ import { commonStyles } from '../styles/commonStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API = 'https://boeykokchin.pythonanywhere.com';
+const API = 'https://yjsoon.pythonanywhere.com';
 const API_WHOAMI = '/whoami';
 
 export default function AccountScreen({ navigation }) {
@@ -27,11 +27,21 @@ export default function AccountScreen({ navigation }) {
       } else {
         console.log(error);
       }
+      // We should probably go back to the login screen???
     }
   }
 
   useEffect(() => {
+    console.log('Setting up nav listener');
+    // Check for when we come back to this screen
+    const removeListener = navigation.addListener('focus', () => {
+      console.log('Running nav listener');
+      setUsername('');
+      getUsername();
+    });
     getUsername();
+
+    return removeListener;
   }, []);
 
   function signOut() {
