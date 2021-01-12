@@ -8,6 +8,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
+  ActivityIndicator,
+  Button,
+  Touchable,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -19,29 +23,38 @@ export default function SignInScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function login() {
-    console.log('---- Login time ----');
+    console.log(' ----- Login ----- ');
     Keyboard.dismiss();
 
     try {
+      setLoading(true);
       const response = await axios.post(API + API_LOGIN, {
         username,
         password,
       });
       console.log('Success logging in!');
-      // console.log(response);
+      console.log(response);
       await AsyncStorage.setItem('token', response.data.access_token);
       navigation.navigate('Account');
     } catch (error) {
       console.log('Error logging in!');
       console.log(error.response);
       setErrorText(error.response.data.description);
+      setLoading(false);
+    }
+  }
+
+  function dismissKeyboard() {
+    if (Platform.OS !== 'web') {
+      Keyboard.dismiss();
     }
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
         <Text style={styles.title}>Sign in to blog</Text>
         <Text style={styles.fieldTitle}>Username</Text>
@@ -62,8 +75,20 @@ export default function SignInScreen({ navigation }) {
           value={password}
           onChangeText={(input) => setPassword(input)}
         />
-        <TouchableOpacity onPress={login} style={styles.loginButton}>
-          <Text style={styles.buttonText}>Log in</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity onPress={login} style={styles.loginButton}>
+            <Text style={styles.buttonText}>Log in</Text>
+          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator style={{ marginBottom: 20, marginLeft: 30 }} />
+          ) : null}
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('SignUp');
+          }}
+        >
+          <Text style={styles.switchText}>Need an account? Sign up</Text>
         </TouchableOpacity>
         <Text style={styles.errorText}>{errorText}</Text>
       </View>
@@ -111,5 +136,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     height: 40,
+  },
+  switchText: {
+    color: 'blue',
   },
 });

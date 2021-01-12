@@ -1,11 +1,12 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import SignInScreen from "./screens/SignInScreen";
-import AccountScreen from "./screens/AccountScreen";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StatusBar } from 'expo-status-bar';
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import SignInScreen from './screens/SignInScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import AccountScreen from './screens/AccountScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 
@@ -14,7 +15,7 @@ export default function App() {
   const [signedIn, setSignedIn] = useState(false);
 
   async function loadToken() {
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem('token');
     if (token) {
       setSignedIn(true);
     }
@@ -32,12 +33,13 @@ export default function App() {
   ) : (
     <NavigationContainer>
       <Stack.Navigator
-        mode="modal"
-        headerMode="none"
-        initialRouteName={signedIn ? "Account" : "SignIn"}
+        mode='modal'
+        headerMode='none'
+        initialRouteName='Account'
       >
-        <Stack.Screen component={AccountScreen} name="Account" />
-        <Stack.Screen component={SignInScreen} name="SignIn" />
+        <Stack.Screen component={AccountScreen} name='Account' />
+        <Stack.Screen component={SignInScreen} name='SignIn' />
+        <Stack.Screen component={SignUpScreen} name='SignUp' />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -46,8 +48,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
