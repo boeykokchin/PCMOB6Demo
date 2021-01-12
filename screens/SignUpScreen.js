@@ -16,7 +16,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API = 'https://yjsoon2.pythonanywhere.com';
+const API = 'https://boeykokchin.pythonanywhere.com';
 const API_LOGIN = '/auth';
 const API_SIGNUP = '/newuser';
 

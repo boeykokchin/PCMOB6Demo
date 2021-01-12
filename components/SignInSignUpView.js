@@ -54,7 +54,7 @@ export default function SignInSignUpView({ navigation, isSignIn }) {
         password,
       });
       console.log('Success logging in!');
-      // console.log(response);
+      console.log(response);
       await AsyncStorage.setItem('token', response.data.access_token);
       setLoading(false);
       navigation.navigate('Account');

@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { set } from 'react-native-reanimated';
 
 const API = 'https://boeykokchin.pythonanywhere.com';
 const API_LOGIN = '/auth';
@@ -38,8 +39,10 @@ export default function SignInScreen({ navigation }) {
       console.log('Success logging in!');
       console.log(response);
       await AsyncStorage.setItem('token', response.data.access_token);
+      setLoading(false);
       navigation.navigate('Account');
     } catch (error) {
+      setLoading(false);
       console.log('Error logging in!');
       console.log(error.response);
       setErrorText(error.response.data.description);
@@ -47,14 +50,14 @@ export default function SignInScreen({ navigation }) {
     }
   }
 
-  function dismissKeyboard() {
-    if (Platform.OS !== 'web') {
-      Keyboard.dismiss();
-    }
-  }
+  // function dismissKeyboard() {
+  //   if (Platform.OS !== 'web') {
+  //     Keyboard.dismiss();
+  //   }
+  // }
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Text style={styles.title}>Sign in to blog</Text>
         <Text style={styles.fieldTitle}>Username</Text>
