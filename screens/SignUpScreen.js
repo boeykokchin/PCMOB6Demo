@@ -16,7 +16,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API = 'https://boeykokchin.pythonanywhere.com';
+const API = 'https://yjsoon2.pythonanywhere.com';
 const API_LOGIN = '/auth';
 const API_SIGNUP = '/newuser';
 
@@ -36,7 +36,13 @@ export default function SignUpScreen({ navigation }) {
         username,
         password,
       });
+      if (response.data.Error === 'User already exists') {
+        setErrorText('This user exists');
+        setLoading(false);
+        return;
+      }
       console.log('Success signing up');
+      console.log(response);
       login();
     } catch (e) {
       console.log('Error signing up');
