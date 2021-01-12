@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ActivityIndicator,
   Button,
@@ -14,13 +14,13 @@ export default function AccountScreen({ navigation }) {
   const [username, loading, error, refresh] = useUsername();
 
   // signs out if the useUsername hook returns error as true
-  useState(() => {
+  useEffect(() => {
     if (error) {
       signOut();
     }
   }, [error]);
 
-  useState(() => {
+  useEffect(() => {
     const removeListener = navigation.addListener('focus', () => {
       refresh(true);
     });
