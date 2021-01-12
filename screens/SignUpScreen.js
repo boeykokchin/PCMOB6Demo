@@ -45,8 +45,10 @@ export default function SignUpScreen({ navigation }) {
       console.log(response);
       login();
     } catch (e) {
+      setLoading(false);
       console.log('Error signing up');
-      console.log(e);
+      console.log(e.response);
+      setErrorText(e.response.data.description);
     }
   }
 
@@ -65,21 +67,21 @@ export default function SignUpScreen({ navigation }) {
       await AsyncStorage.setItem('token', response.data.access_token);
       navigation.navigate('Account');
     } catch (error) {
+      setLoading(false);
       console.log('Error logging in!');
       console.log(error.response);
       setErrorText(error.response.data.description);
-      setLoading(false);
     }
   }
 
-  function dismissKeyboard() {
-    if (Platform.OS !== 'web') {
-      Keyboard.dismiss();
-    }
-  }
+  // function dismissKeyboard() {
+  //   if (Platform.OS !== 'web') {
+  //     Keyboard.dismiss();
+  //   }
+  // }
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Text style={styles.title}>Register for account</Text>
         <Text style={styles.fieldTitle}>Username</Text>

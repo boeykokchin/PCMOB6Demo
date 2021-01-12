@@ -29,17 +29,23 @@ export default function SignInSignUpView({ navigation, isSignIn }) {
 
     try {
       setLoading(true);
-      await axios.post(API + API_SIGNUP, {
+      const response = await axios.post(API + API_SIGNUP, {
         username,
         password,
       });
+      if (response.data.Error === 'User already exists') {
+        setErrorText('This user exists');
+        setLoading(false);
+        return;
+      }
       console.log('Success signing up!');
+      console.log(response);
       login();
-    } catch (error) {
+    } catch (e) {
       setLoading(false);
       console.log('Error signing up!');
-      console.log(error.response);
-      setErrorText(error.response.data.description);
+      console.log(e.response);
+      setErrorText(e.response.data.description);
     }
   }
 
