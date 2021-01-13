@@ -75,6 +75,11 @@ export function useAuth(username, password, navigationCallback) {
         username,
         password,
       });
+      if (response.data.Error === 'User already exists') {
+        setErrorText('This user exists');
+        setLoading(false);
+        return;
+      }
       console.log('Success signing up!');
       login();
     } catch (error) {

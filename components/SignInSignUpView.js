@@ -53,7 +53,7 @@ export default function SignInSignUpView({ navigation, isSignIn }) {
             style={styles.loginButton}
           >
             <Text style={styles.buttonText}>
-              {isSignIn ? 'Log in' : 'Sign up'}
+              {isSignIn ? 'Login' : 'SignUp'}
             </Text>
           </TouchableOpacity>
           {loading ? (
