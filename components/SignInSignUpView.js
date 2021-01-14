@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
-import { useAuth } from '../hooks/useAPI.js';
+import { useAuth } from '../hooks/useAPI';
 
 export default function SignInSignUpView({ navigation, isSignIn }) {
   const [username, setUsername] = useState('');
@@ -19,15 +20,35 @@ export default function SignInSignUpView({ navigation, isSignIn }) {
     username,
     password,
     () => {
-      navigation.navigate('TabStack'); // function to be run on successful login
+      navigation.navigate('TabStack');
     }
   );
 
+  function dismissKeyboard() {
+    if (Platform.OS !== 'web') {
+      Keyboard.dismiss();
+    }
+  }
+
+  function handleLogin() {
+    dismissKeyboard();
+    login();
+    setUsername('');
+    setPassword('');
+  }
+
+  function handleSignup() {
+    dismissKeyboard();
+    signup();
+    setUsername('');
+    setPassword('');
+  }
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
         <Text style={styles.title}>
-          {isSignIn ? 'Log in to blog' : 'Sign up for an account'}
+          {isSignIn ? 'Sign in to blog' : 'Register for account'}
         </Text>
         <Text style={styles.fieldTitle}>Username</Text>
         <TextInput
@@ -49,32 +70,32 @@ export default function SignInSignUpView({ navigation, isSignIn }) {
         />
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity
-            onPress={isSignIn ? login : signup}
-            style={styles.loginButton}
+            onPress={isSignIn ? handleLogin : handleSignup}
+            style={[
+              styles.loginButton,
+              { backgroundColor: isSignIn ? 'red' : 'blue' },
+            ]}
           >
             <Text style={styles.buttonText}>
-              {isSignIn ? 'Login' : 'SignUp'}
+              {isSignIn ? 'Log in' : 'Sign up'}
             </Text>
           </TouchableOpacity>
           {loading ? (
-            <ActivityIndicator style={{ marginLeft: 20, marginBottom: 20 }} /> // adjust
+            <ActivityIndicator style={{ marginBottom: 20, marginLeft: 30 }} />
           ) : null}
         </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate(isSignIn ? 'SignUp' : 'SignIn');
           }}
-          style={styles.switchButton}
         >
           <Text style={styles.switchText}>
             {isSignIn
-              ? 'Register for a new account'
-              : 'Have an account? Sign in'}
+              ? 'Need an account? Register here'
+              : 'Already have an account? Sign in'}
           </Text>
         </TouchableOpacity>
-
         <Text style={styles.errorText}>{errorText}</Text>
-        {/* <View style={{ height: 20, alignItems: 'left' }}></View> */}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -117,11 +138,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
   },
-  switchText: {
-    color: 'blue',
-  },
   errorText: {
     color: 'red',
     height: 40,
+  },
+  switchText: {
+    color: 'blue',
   },
 });

@@ -13,19 +13,19 @@ import { useUsername } from '../hooks/useAPI';
 export default function AccountScreen({ navigation }) {
   const [username, loading, error, refresh] = useUsername();
 
-  // signs out if the useUsername hook returns error as true
   useEffect(() => {
     if (error) {
       signOut();
     }
-  }, [error]);
+  }, [error]); // monitor the error state variable
 
   useEffect(() => {
+    console.log('Setting up navlistener');
     const removeListener = navigation.addListener('focus', () => {
       refresh(true);
     });
     return removeListener;
-  }, []);
+  }, []); // run this once on start
 
   function signOut() {
     AsyncStorage.removeItem('token');

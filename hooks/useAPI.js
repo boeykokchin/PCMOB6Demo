@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API = 'https://boeykokchin.pythonanywhere.com';
+// const API = "https://boeykokchin.pythonanywhere.com";
+const API = 'http://192.168.0.154:5000/';
 const API_WHOAMI = '/whoami';
 const API_LOGIN = '/auth';
 const API_SIGNUP = '/newuser';
 
 export function useUsername() {
   const [username, setUsername] = useState('');
-  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       const token = await AsyncStorage.getItem('token');
-      console.log(token);
       if (token == null) {
         setError(true);
         setUsername(null);
@@ -27,10 +27,11 @@ export function useUsername() {
             headers: { Authorization: `JWT ${token}` },
           });
           setUsername(response.data.username);
-          setLoading(false);
         } catch (e) {
           setError(true);
           setUsername(null);
+        } finally {
+          // this is run regardless of error or not
           setLoading(false);
         }
       }
@@ -42,11 +43,11 @@ export function useUsername() {
 }
 
 export function useAuth(username, password, navigationCallback) {
-  const [loading, setLoading] = useState(false);
-  const [errorText, setErrorText] = useState('');
+  [loading, setLoading] = useState(false);
+  [errorText, setErrorText] = useState('');
 
   async function login() {
-    console.log('---- Signing in ----');
+    console.log(' ----- Login ----- ');
 
     try {
       setLoading(true);
@@ -54,39 +55,41 @@ export function useAuth(username, password, navigationCallback) {
         username,
         password,
       });
-      console.log('Success signing in!');
+      console.log('Success logging in!');
+      console.log(response);
       await AsyncStorage.setItem('token', response.data.access_token);
-      setLoading(false);
       navigationCallback();
     } catch (error) {
-      setLoading(false);
-      console.log('Error signing in!');
-      console.log(error);
+      console.log('Error logging in!');
+      console.log(error.response);
       setErrorText(error.response.data.description);
+    } finally {
+      setLoading(false);
     }
   }
 
   async function signup() {
-    console.log('---- Signing up ----');
+    console.log(' ----- Sign up ----- ');
 
     try {
       setLoading(true);
-      await axios.post(API + API_SIGNUP, {
+      const response = await axios.post(API + API_SIGNUP, {
         username,
         password,
       });
-      // if (response.data.Error === 'User already exists') {
-      //   setErrorText('This user exists');
-      //   setLoading(false);
-      //   return;
-      // }
-      console.log('Success signing up!');
+      if (response.data.Error === 'User already exists') {
+        setErrorText('This user exists');
+        return;
+      }
+      console.log('Success signing up');
+      console.log(response);
       login();
     } catch (error) {
-      setLoading(false);
-      console.log('Error signing up!');
+      console.log('Error signing up');
       console.log(error);
       setErrorText(error.response.data.description);
+    } finally {
+      setLoading(false);
     }
   }
 
