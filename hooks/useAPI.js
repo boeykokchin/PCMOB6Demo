@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// const API = "https://boeykokchin.pythonanywhere.com";
-const API = 'http://192.168.0.154:5000/';
+const API = 'https://boeykokchin.pythonanywhere.com';
+// const API = 'http://192.168.0.154:5000/';
 const API_WHOAMI = '/whoami';
 const API_LOGIN = '/auth';
 const API_SIGNUP = '/newuser';
@@ -43,8 +43,8 @@ export function useUsername() {
 }
 
 export function useAuth(username, password, navigationCallback) {
-  [loading, setLoading] = useState(false);
-  [errorText, setErrorText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorText, setErrorText] = useState('');
 
   async function login() {
     console.log(' ----- Login ----- ');

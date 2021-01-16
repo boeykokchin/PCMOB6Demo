@@ -4,13 +4,18 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import AccountScreen from './screens/AccountScreen';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TabStack from './components/TabStack';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from './redux/createStore';
 import { signInAction } from './redux/ducks/blogAuth';
+import { toggleDarkMode } from './redux/ducks/accountPrefs';
 
 const Stack = createStackNavigator();
 
@@ -26,6 +31,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
   const signedIn = useSelector((state) => state.auth.signedIn); // before: [] = useState()
+  const isDarkModeOn = useSelector((state) => state.prefs.darkMode);
 
   async function loadToken() {
     const token = await AsyncStorage.getItem('token');
@@ -52,7 +58,7 @@ function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={isDarkModeOn ? DarkTheme : DefaultTheme}>
       {signedIn ? (
         <TabStack />
       ) : (
